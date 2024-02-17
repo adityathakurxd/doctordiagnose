@@ -1,6 +1,11 @@
 # Doctor Diagnose
 A Flutter-based application designed for medical professionals to enhance their diagnostic skills by guessing possible causes of symptoms using Google's Gemini model.
 
+➡️ Try it out here: [dodiagnose.web.app](https://dodiagnose.web.app/)
+
+![Doctor Diagnose Banner](https://github.com/adityathakurxd/doctordiagnose/assets/53579386/cea8803e-f94b-4314-959b-1016edea7a31)
+
+
 ## Disclaimer
 
 This game is intended for educational purposes only and should not be used as a substitute for professional medical advice, diagnosis, or treatment. Always seek the advice of your physician or other qualified health provider with any questions you may have regarding a medical condition.
