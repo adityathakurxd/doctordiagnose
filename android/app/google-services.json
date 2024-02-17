@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "726713077680",
+    "project_id": "dodiagnose",
+    "storage_bucket": "dodiagnose.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:726713077680:android:477e5d1c4e335cc7715075",
+        "android_client_info": {
+          "package_name": "com.aditya.doctordiagnose"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD3p8jOIw7lF_8pKJXB4WT2vkoZU5K8arM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

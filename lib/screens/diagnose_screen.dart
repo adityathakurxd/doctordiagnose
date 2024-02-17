@@ -1,4 +1,3 @@
-import 'package:doctordiagnose/data/data.dart';
 import 'package:doctordiagnose/keys/env.dart';
 import 'package:flutter/material.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
