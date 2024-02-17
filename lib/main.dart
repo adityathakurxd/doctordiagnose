@@ -1,3 +1,4 @@
+import 'package:doctordiagnose/screens/home_screen.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -9,12 +10,20 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: Scaffold(
-        body: Center(
-          child: Text('Hello World!'),
-        ),
-      ),
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+          textTheme: const TextTheme(
+            titleMedium: TextStyle(color: Color(0xFF252525)),
+            bodyMedium: TextStyle(color: Colors.white),
+          ),
+          appBarTheme: const AppBarTheme(
+            backgroundColor: Color(0xFFc9f66f),
+          ),
+          scaffoldBackgroundColor: const Color(0xFF1C1C1C),
+          colorScheme:
+              ColorScheme.fromSeed(seedColor: const Color(0xFFc9f66f))),
+      home: const HomeScreen(),
     );
   }
 }
