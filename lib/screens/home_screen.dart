@@ -1,3 +1,5 @@
+import 'package:doctordiagnose/data/data.dart';
+import 'package:doctordiagnose/screens/diagnose_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -14,42 +16,53 @@ class HomeScreen extends StatelessWidget {
           style: Theme.of(context).textTheme.titleMedium,
         ),
       ),
-      body: MediaQuery.removePadding(
-        context: context,
-        removeTop: true,
-        child: GridView.builder(
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-            ),
-            itemCount: 4,
-            itemBuilder: (BuildContext context, int index) {
-              return Card(
-                  color: const Color(0xFF252525),
-                  child: Column(
-                    children: [
-                      const SizedBox(
-                        height: 12,
-                      ),
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width * 0.25,
-                        child: Image(
-                          image: AssetImage(
-                              'assets/avatars/avatar${index + 1}.png'),
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 5,
-                      ),
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width * 0.20,
-                        child: const Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 5.0),
-                          child: Text("Problem 1"),
-                        ),
-                      ),
-                    ],
-                  ));
-            }),
+      body: Center(
+        child: SizedBox(
+          width: 600,
+          child: GridView.builder(
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+              ),
+              itemCount: 5,
+              itemBuilder: (BuildContext context, int index) {
+                final scenario = medicalScenarios[index];
+                return GestureDetector(
+                  onTap: () => {
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => const DiagnoseScreen()))
+                  },
+                  child: Card(
+                      color: const Color(0xFF252525),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          const SizedBox(
+                            height: 18,
+                          ),
+                          SizedBox(
+                            width: 80,
+                            child: Image(
+                              image:
+                                  AssetImage('assets/avatars/avatar$index.png'),
+                            ),
+                          ),
+                          const Spacer(),
+                          Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 18.0),
+                            child: Center(
+                              child: Text(
+                                'Symptoms: ${scenario['symptom']}',
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                          ),
+                          const Spacer(),
+                        ],
+                      )),
+                );
+              }),
+        ),
       ),
     );
   }
