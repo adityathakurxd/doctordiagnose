@@ -29,7 +29,9 @@ class HomeScreen extends StatelessWidget {
                 return GestureDetector(
                   onTap: () => {
                     Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => const DiagnoseScreen()))
+                        builder: (context) => DiagnoseScreen(
+                              medicalScenario: scenario,
+                            )))
                   },
                   child: Card(
                       color: const Color(0xFF252525),
