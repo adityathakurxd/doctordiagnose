@@ -36,3 +36,6 @@ This game is intended for educational purposes only and should not be used as a 
 
 We welcome contributions to improve and expand the functionality of this game. If you'd like to contribute, please follow our [contribution guidelines](./CONTRIBUTING.md).
 
+## Credits
+#### Illustrations
+The characters used in this project are from the [Desi Log Illustration Pack](https://desilog.in/), a free resource providing mix-and-match components for diverse Indian characters, made by [Juhi Chitra](https://www.juhi.co/).
