@@ -1,6 +1,5 @@
 import 'package:doctordiagnose/data/data.dart';
 import 'package:doctordiagnose/screens/diagnose_screen.dart';
-import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -27,8 +26,6 @@ class HomeScreen extends StatelessWidget {
                 final scenario = medicalScenarios[index];
                 return GestureDetector(
                   onTap: () async => {
-                    await FirebaseAnalytics.instance.logEvent(
-                        name: "Started Challenge", parameters: scenario),
                     Navigator.of(context).push(
                       MaterialPageRoute(
                         builder: (context) => DiagnoseScreen(
