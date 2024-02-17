@@ -1,7 +1,6 @@
 import 'package:doctordiagnose/keys/env.dart';
 import 'package:flutter/material.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
-import 'package:firebase_analytics/firebase_analytics.dart';
 
 class DiagnoseScreen extends StatelessWidget {
   const DiagnoseScreen({super.key, required this.medicalScenario});
