@@ -1,5 +1,6 @@
 import 'package:doctordiagnose/data/data.dart';
 import 'package:doctordiagnose/screens/diagnose_screen.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -27,11 +28,16 @@ class HomeScreen extends StatelessWidget {
               itemBuilder: (BuildContext context, int index) {
                 final scenario = medicalScenarios[index];
                 return GestureDetector(
-                  onTap: () => {
-                    Navigator.of(context).push(MaterialPageRoute(
+                  onTap: () async => {
+                    await FirebaseAnalytics.instance.logEvent(
+                        name: "Started Challenge", parameters: scenario),
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
                         builder: (context) => DiagnoseScreen(
-                              medicalScenario: scenario,
-                            )))
+                          medicalScenario: scenario,
+                        ),
+                      ),
+                    ),
                   },
                   child: Card(
                       color: const Color(0xFF252525),
