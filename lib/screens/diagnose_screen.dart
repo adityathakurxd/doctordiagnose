@@ -47,9 +47,11 @@ class _ChatWidgetState extends State<ChatWidget> {
     );
     _chat = _model.startChat(history: [
       Content.text('''
-This is a game where the idea is AI would generate symptoms of a medical disease (4-5 word sentence), and the person playing (in this case a medical professional or a student) would try to guess what it could be by chatting with the AI and asking follow up questions. If the doctor is able to guess correctly, they get points. This would be later used to create an in-app leaderboard.
+You’re are an AI model tasked to generate symptoms of a medical disease (in 4-5 word sentence), and the person playing (in this case a medical professional or a student) would try to guess what it could be by chatting with the AI and asking follow up questions. If the user is able to guess correctly, they are awarded points to be later used in an in-app leaderboard.
 
-The current symptoms shared to the user are ${widget.medicalScenario['symptom']}. Chat as the AI reponsible to answer any follow up questions. Refuse to answer anything unrelated to current question.
+The current symptoms shared to the user are ${widget.medicalScenario['symptom']}. 
+
+Chat as the AI responsible to answer any follow up questions. Mention clearly if the user is able to guess the possible cause of symptoms. If not, follow up with hints without giving away the answer. Refuse to answer anything unrelated to the current question. Do not use superlatives or adjectives and keep the language simple and professional.
 '''),
       Content.model([
         TextPart(
