@@ -43,7 +43,7 @@ class _ChatWidgetState extends State<ChatWidget> {
     _chatHistory = [
       {
         "role": "user",
-        "text": '''
+        "parts": '''
 You’re are an AI model tasked to generate symptoms of a medical disease (in 4-5 word sentence), and the person playing (in this case a medical professional or a student) would try to guess what it could be by chatting with the AI and asking follow up questions. If the user is able to guess correctly, they are awarded points to be later used in an in-app leaderboard.
 
 The current symptoms shared to the user are ${widget.medicalScenario['symptom']}. 
@@ -53,7 +53,7 @@ Chat as the AI responsible to answer any follow up questions. Mention clearly if
       },
       {
         "role": "model",
-        "text":
+        "parts":
             'Let us get started! What is the probable cause of ${widget.medicalScenario['symptom']}'
       },
     ];
@@ -107,7 +107,7 @@ Chat as the AI responsible to answer any follow up questions. Mention clearly if
             itemBuilder: (context, idx) {
               var message = _chatHistory[idx];
               return MessageWidget(
-                text: message['text'],
+                text: message['parts'],
                 isFromUser: message['role'] == 'user',
               );
             },
@@ -164,13 +164,15 @@ Chat as the AI responsible to answer any follow up questions. Mention clearly if
       setState(() {
         _chatHistory.add({
           "role": "user",
-          "text": message,
+          "parts": message,
         });
+        _scrollDown();
+        _textController.clear();
       });
       var response = await _networkService.post(
         '${Env.serverUrl}/generate',
         {
-          'history': _chatHistory,
+          'history': _chatHistory.sublist(0, _chatHistory.length - 1),
           'message': message,
         },
       );
@@ -182,7 +184,7 @@ Chat as the AI responsible to answer any follow up questions. Mention clearly if
         setState(() {
           _chatHistory.add({
             "role": "model",
-            "text": response['response'],
+            "parts": response['response'],
           });
           _loading = false;
           _scrollDown();
@@ -194,7 +196,6 @@ Chat as the AI responsible to answer any follow up questions. Mention clearly if
         _loading = false;
       });
     } finally {
-      _textController.clear();
       setState(() {
         _loading = false;
       });
