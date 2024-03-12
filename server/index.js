@@ -9,15 +9,16 @@ const port = process.env.PORT || 3000
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY)
 const model = genAI.getGenerativeModel({ model: 'gemini-pro' })
 
+const allowedOrigin = process.env.ALLOWED_ORIGIN || 'http://127.0.0.1:5000'
+
 const app = express()
 app.use(function (req, res, next) {
-  res.header('Access-Control-Allow-Origin', '*')
+  res.header('Access-Control-Allow-Origin', allowedOrigin)
   res.header('Access-Control-Allow-Methods', 'GET,PUT,PATCH,POST,DELETE')
   res.header(
     'Access-Control-Allow-Headers',
     'Origin, X-Requested-With, Content-Type, Accept'
   )
-  console.log('Request:', req.method, req.url, req.body)
   next()
 })
 app.use(express.json())
@@ -26,15 +27,17 @@ app.post('/generate', async (req, res) => {
   const history = req.body.history
   const message = req.body.message
 
+  console.log('history:', history)
+  console.log('message:', message)
+
   if (!history) {
     return res.status(400).send('history is required')
   }
-
   if (!message) {
     return res.status(400).send('message is required')
   }
 
-  const chat = await model.startChat({ history })
+  const chat = await model.startChat({ history: history })
 
   try {
     const result = await chat.sendMessage(message)
