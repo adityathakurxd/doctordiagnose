@@ -161,14 +161,6 @@ Chat as the AI responsible to answer any follow up questions. Mention clearly if
     });
 
     try {
-      setState(() {
-        _chatHistory.add({
-          "role": "user",
-          "parts": message,
-        });
-        _scrollDown();
-        _textController.clear();
-      });
       var response = await _networkService.post(
         '${Env.serverUrl}/generate',
         {
@@ -182,6 +174,10 @@ Chat as the AI responsible to answer any follow up questions. Mention clearly if
         return;
       } else {
         setState(() {
+          _chatHistory.add({
+            "role": "user",
+            "parts": message,
+          });
           _chatHistory.add({
             "role": "model",
             "parts": response['response'],
