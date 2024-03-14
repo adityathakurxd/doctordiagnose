@@ -1,6 +1,6 @@
 import 'package:doctordiagnose/keys/env.dart';
+import 'package:doctordiagnose/services/network_service.dart';
 import 'package:flutter/material.dart';
-import 'package:google_generative_ai/google_generative_ai.dart';
 
 class DiagnoseScreen extends StatelessWidget {
   const DiagnoseScreen({super.key, required this.medicalScenario});
@@ -30,34 +30,33 @@ class ChatWidget extends StatefulWidget {
 }
 
 class _ChatWidgetState extends State<ChatWidget> {
-  late final GenerativeModel _model;
-  late final ChatSession _chat;
   final ScrollController _scrollController = ScrollController();
   final TextEditingController _textController = TextEditingController();
   final FocusNode _textFieldFocus = FocusNode();
+  List<Map> _chatHistory = [];
   bool _loading = false;
-  // static const _apiKey = String.fromEnvironment('API_KEY');
+  final NetworkService _networkService = NetworkService();
 
   @override
   void initState() {
     super.initState();
-    _model = GenerativeModel(
-      model: 'gemini-pro',
-      apiKey: Env.apiKey,
-    );
-    _chat = _model.startChat(history: [
-      Content.text('''
+    _chatHistory = [
+      {
+        "role": "user",
+        "parts": '''
 You’re are an AI model tasked to generate symptoms of a medical disease (in 4-5 word sentence), and the person playing (in this case a medical professional or a student) would try to guess what it could be by chatting with the AI and asking follow up questions. If the user is able to guess correctly, they are awarded points to be later used in an in-app leaderboard.
 
 The current symptoms shared to the user are ${widget.medicalScenario['symptom']}. 
 
 Chat as the AI responsible to answer any follow up questions. Mention clearly if the user is able to guess the possible cause of symptoms. If not, follow up with hints without giving away the answer. Refuse to answer anything unrelated to the current question. Do not use superlatives or adjectives and keep the language simple and professional.
-'''),
-      Content.model([
-        TextPart(
-            'Let us get started! What is the probable cause of ${widget.medicalScenario['symptom']}')
-      ])
-    ]);
+''',
+      },
+      {
+        "role": "model",
+        "parts":
+            'Let us get started! What is the probable cause of ${widget.medicalScenario['symptom']}'
+      },
+    ];
   }
 
   void _scrollDown() {
@@ -103,28 +102,17 @@ Chat as the AI responsible to answer any follow up questions. Mention clearly if
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Expanded(
-            child: Env.apiKey.isNotEmpty
-                ? ListView.builder(
-                    controller: _scrollController,
-                    itemBuilder: (context, idx) {
-                      var content = _chat.history.toList()[idx];
-                      var text = content.parts
-                          .whereType<TextPart>()
-                          .map<String>((e) => e.text)
-                          .join('');
-                      return MessageWidget(
-                        text: text,
-                        isFromUser: content.role == 'user',
-                      );
-                    },
-                    itemCount: _chat.history.length,
-                  )
-                : ListView(
-                    children: const [
-                      Text('No API key found. Please provide an API Key.'),
-                    ],
-                  ),
-          ),
+              child: ListView.builder(
+            controller: _scrollController,
+            itemBuilder: (context, idx) {
+              var message = _chatHistory[idx];
+              return MessageWidget(
+                text: message['parts'],
+                isFromUser: message['role'] == 'user',
+              );
+            },
+            itemCount: _chatHistory.length,
+          )),
           Padding(
             padding: const EdgeInsets.symmetric(
               vertical: 25,
@@ -173,16 +161,27 @@ Chat as the AI responsible to answer any follow up questions. Mention clearly if
     });
 
     try {
-      var response = await _chat.sendMessage(
-        Content.text(message),
+      var response = await _networkService.post(
+        '${Env.serverUrl}/generate',
+        {
+          'history': _chatHistory.sublist(0, _chatHistory.length - 1),
+          'message': message,
+        },
       );
-      var text = response.text;
 
-      if (text == null) {
-        _showError('No response from API.');
+      if (!response['success']) {
+        _showError('No response from API. ${response['error']}');
         return;
       } else {
         setState(() {
+          _chatHistory.add({
+            "role": "user",
+            "parts": message,
+          });
+          _chatHistory.add({
+            "role": "model",
+            "parts": response['response'],
+          });
           _loading = false;
           _scrollDown();
         });
@@ -193,7 +192,6 @@ Chat as the AI responsible to answer any follow up questions. Mention clearly if
         _loading = false;
       });
     } finally {
-      _textController.clear();
       setState(() {
         _loading = false;
       });
@@ -208,7 +206,13 @@ Chat as the AI responsible to answer any follow up questions. Mention clearly if
         return AlertDialog(
           title: const Text('Something went wrong'),
           content: SingleChildScrollView(
-            child: SelectableText(message),
+            child: SelectableText(
+              message,
+              style: const TextStyle(
+                fontSize: 18,
+                color: Colors.black,
+              ),
+            ),
           ),
           actions: [
             TextButton(
@@ -242,22 +246,23 @@ class MessageWidget extends StatelessWidget {
       children: [
         Flexible(
           child: Container(
-              constraints: const BoxConstraints(maxWidth: 600),
-              decoration: BoxDecoration(
-                color: isFromUser
-                    ? Theme.of(context).colorScheme.primaryContainer
-                    : Theme.of(context).colorScheme.surfaceVariant,
-                borderRadius: BorderRadius.circular(18),
-              ),
-              padding: const EdgeInsets.symmetric(
-                vertical: 15,
-                horizontal: 20,
-              ),
-              margin: const EdgeInsets.only(bottom: 8),
-              child: Text(
-                text,
-                style: const TextStyle(color: Color(0xFF252525)),
-              )),
+            constraints: const BoxConstraints(maxWidth: 600),
+            decoration: BoxDecoration(
+              color: isFromUser
+                  ? Theme.of(context).colorScheme.primaryContainer
+                  : Theme.of(context).colorScheme.surfaceVariant,
+              borderRadius: BorderRadius.circular(18),
+            ),
+            padding: const EdgeInsets.symmetric(
+              vertical: 15,
+              horizontal: 20,
+            ),
+            margin: const EdgeInsets.only(bottom: 8),
+            child: Text(
+              text,
+              style: const TextStyle(color: Color(0xFF252525)),
+            ),
+          ),
         ),
       ],
     );
